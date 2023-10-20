@@ -57,7 +57,7 @@ export default function Despesa() {
         </Text>
         <View style={styles.descricaoInput}>
           <Text>Descricao</Text>
-          <Input placeholder="Ex:: Cartão de Crédito" />
+          <Input placeholder="Ex: Cartão de Crédito" />
         </View>
       </View>
 

@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
-export default function Item() {
+export default function Item({ data }) {
   return (
     <TouchableOpacity onPress={() => alert("Detalhe do dia")}>
       <View style={styles.itens}>
@@ -10,11 +10,11 @@ export default function Item() {
           <AntDesign name="creditcard" size={24} color="white" />
         </View>
         <View style={styles.descricao}>
-          <Text style={styles.textDescricao}>Cartão de Crédito</Text>
-          <Text style={styles.textCategoria}>Cartão</Text>
+          <Text style={styles.textDescricao}>{data.descricao}</Text>
+          <Text style={styles.textCategoria}>{data.categoria}</Text>
         </View>
         <View style={styles.valor}>
-          <Text style={styles.textValor}>R$ 200,00</Text>
+          <Text style={styles.textValor}>{`R$ ${data.valor}`}</Text>
           <Entypo name="circle-with-minus" size={12} color="red" />
         </View>
       </View>

@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  FlatList,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -12,6 +13,93 @@ import { AntDesign } from "@expo/vector-icons";
 import Data from "../../components/Detalhe/Data";
 import Menu from "../../components/MenuInferior/Menu";
 import ButtonPlus from "../../components/ButtonPlus/ButtonPlus";
+
+const list = [
+  {
+    id: 1,
+    valorTotal: "500,00",
+    date: "09/06/2023",
+    listaItens: [
+      {
+        id: 1,
+        descricao: "Loja 1",
+        valor: "100,00",
+        date: "09/09/2023",
+        categoria: "Cartão de Crédito",
+      },
+      {
+        id: 2,
+        descricao: "Loja 2",
+        valor: "250,00",
+        date: "09/09/2023",
+        categoria: "Cartão de Crédito",
+      },
+      {
+        id: 3,
+        descricao: "Loja 3",
+        valor: "250,00",
+        date: "09/09/2023",
+        categoria: "Cartão de Crédito",
+      },
+    ],
+  },
+  {
+    id: 2,
+    valorTotal: "300,00",
+    date: "10/06/2023",
+    listaItens: [
+      {
+        id: 1,
+        descricao: "Loja 3",
+        valor: "300,00",
+        date: "10/09/2023",
+        categoria: "Cartão de Crédito",
+      },
+    ],
+  },
+  {
+    id: 3,
+    valorTotal: "500,00",
+    date: "11/06/2023",
+    listaItens: [
+      {
+        id: 1,
+        descricao: "Loja 3",
+        valor: "300,00",
+        date: "11/09/2023",
+        categoria: "Cartão de Crédito",
+      },
+      {
+        id: 2,
+        descricao: "Loja 2",
+        valor: "200,00",
+        date: "11/09/2023",
+        categoria: "Cartão de Crédito",
+      },
+    ],
+  },
+  {
+    id: 4,
+    valorTotal: "500,00",
+    date: "12/06/2023",
+    listaItens: [
+      {
+        id: 1,
+        descricao: "Loja 3",
+        valor: "300,00",
+        date: "12/09/2023",
+        categoria: "Cartão de Crédito",
+      },
+      {
+        id: 2,
+        descricao: "Loja 2",
+        valor: "200,00",
+        date: "12/09/2023",
+        categoria: "Cartão de Crédito",
+      },
+    ],
+  },
+];
 
 export default function Home() {
   return (
@@ -51,7 +139,7 @@ export default function Home() {
           <Text style={styles.titleTotalMes}>Total do mês</Text>
         </View>
         <View>
-          <Text style={styles.valorTotalMes}>R$ 219,00</Text>
+          <Text style={styles.valorTotalMes}>R$ 1.819,00</Text>
         </View>
         <View style={styles.susbtotais}>
           <View style={styles.pago}>
@@ -76,7 +164,7 @@ export default function Home() {
                 <Text style={styles.titlePagar}>A pagar</Text>
               </View>
               <View>
-                <Text style={styles.totalPagar}>R$ 200,00</Text>
+                <Text style={styles.totalPagar}>R$ 1.800,00</Text>
               </View>
             </View>
           </View>
@@ -84,19 +172,17 @@ export default function Home() {
       </View>
 
       <View style={styles.containerBody}>
-        <ScrollView
-          style={{
-            width: "100%", // Ocupa toda a largura disponível
-            marginLeft: 40,
-            paddingTop: 10,
-          }}
-        >
-          <Data />
-          <Data />
-          <Data />
-          <Data />
-          <Data />
-        </ScrollView>
+
+          <FlatList
+            style={{
+              width: "100%", // Ocupa toda a largura disponível
+              marginLeft: 40,
+              paddingTop: 10,
+            }}
+            data={list}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => <Data data={item} />}
+          />
       </View>
 
       <Menu />

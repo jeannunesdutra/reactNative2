@@ -1,20 +1,49 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, FlatList } from "react-native";
 import Item from "./Item";
 
-export default function Data() {
+const list = [
+  {
+    id: 1,
+    descricao: "Loja 1",
+    valor: "100,00",
+    date: "09/09/2023",
+    categoria: "Cartão de Crédito",
+  },
+  {
+    id: 2,
+    descricao: "Loja 2",
+    valor: "200,00",
+    date: "09/09/2023",
+    categoria: "Cartão de Crédito",
+  },
+  {
+    id: 3,
+    descricao: "Loja 3",
+    valor: "300,00",
+    date: "09/09/2023",
+    categoria: "Cartão de Crédito",
+  },
+];
+
+export default function Data({ data }) {
+  console.log('teste ', data.listaItens[0]);
   return (
     <View style={styles.container}>
       <View style={styles.dataTotal}>
         <View>
-          <Text style={styles.data}>01/06/2023</Text>
+          <Text style={styles.data}>{data.date}</Text>
         </View>
         <View>
-          <Text style={styles.total}>R$ 200,00</Text>
+          <Text style={styles.total}>{`R$ ${data.valorTotal}`}</Text>
         </View>
       </View>
 
-      <Item />
-      <Item />
+      <FlatList
+        style={styles.list}
+        data={data.listaItens}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => <Item data={item} />}
+      />
     </View>
   );
 }
