@@ -5,7 +5,6 @@ export default function Money() {
   return (
     <View style={styles.container}>
       <Text>Money</Text>
-      <StatusBar style="auto" />
     </View>
   );
 }

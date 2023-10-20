@@ -1,9 +1,4 @@
-import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
@@ -28,36 +23,6 @@ export default function Item() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 20,
-    backgroundColor: "#fff",
-    width: "90%",
-    borderRadius: 10,
-  },
-  title: {
-    fontSize: 18, // Tamanho da fonte do título
-    color: "#fff", // Cor do título
-  },
-
-  dataTotal: {
-    marginTop: 15,
-    justifyContent: "space-between", // Espaçamento igual entre os botões
-    width: "100%", // Ocupa toda a largura disponível
-    flexDirection: "row", // Exibir os botões em uma linha horizontal
-  },
-
-  data: {
-    marginLeft: 15,
-    fontWeight: "bold", //
-    fontSize: 16, // Tamanho da fonte do título
-  },
-
-  total: {
-    marginRight: 25,
-    fontWeight: "bold", //
-    fontSize: 16, // Tamanho da fonte do título
-  },
-
   itens: {
     width: "100%", // Ocupa toda a largura disponível
     flexDirection: "row", // Exibir os botões em uma linha horizontal
@@ -84,13 +49,13 @@ const styles = StyleSheet.create({
     flexDirection: "row", // Exibir os botões em uma linha horizontal
   },
   textDescricao: {
-    fontSize: 14, // Tamanho da fonte do título
+    fontSize: 14,
   },
   textCategoria: {
-    fontSize: 12, // Tamanho da fonte do título
+    fontSize: 12,
   },
   textValor: {
-    fontSize: 14, // Tamanho da fonte do título
+    fontSize: 14,
     paddingRight: 10,
   },
 });

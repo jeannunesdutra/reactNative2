@@ -1,11 +1,17 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
-
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import Data from "../../components/Detalhe/Data";
+import Menu from "../../components/MenuInferior/Menu";
+import ButtonPlus from "../../components/ButtonPlus/ButtonPlus";
 
 export default function Home() {
   return (
@@ -92,6 +98,9 @@ export default function Home() {
           <Data />
         </ScrollView>
       </View>
+
+      <Menu />
+      <ButtonPlus />
     </View>
   );
 }

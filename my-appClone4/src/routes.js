@@ -2,33 +2,21 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 
 import Home from './pages/Home/Home'
 import Money from "./pages/Money/Money";
-import Store from "./pages/Store/Store";
-import CustomTabBar from './components/CustomTabBar';
+import Despesa from "./pages/NovaDespesa/NovaDespesa";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 export function Routes(){
     return (
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarHideOnKeyboard: true,
-        }}
-       
-      >
-        <Tab.Screen
+      <Stack.Navigator>
+        <Stack.Screen
+          options={{ headerShown: false }}
           name="Home"
           component={Home}
         />
-        <Tab.Screen
-          name="Money"
-          component={Money}
-        />
-        <Tab.Screen
-          name="Store"
-          component={Store}
-        />
-      </Tab.Navigator>
-      
+        <Stack.Screen name="Money" component={Money} />
+        <Stack.Screen name="Nova despesa" component={Despesa} />
+      </Stack.Navigator>
     );
 }
