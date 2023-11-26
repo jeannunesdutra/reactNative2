@@ -7,10 +7,25 @@ import { Input } from "react-native-elements";
 import { Feather } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { fetchNovaDespesa } from "../../api/despesas";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Despesa() {
-  const [value, setValue] = useState(0);
+  const navigation = useNavigation();
+
+  const [valor, setValor] = useState(0);
+  const [valorFormatado, setValorFormatado] = useState('');
   const [checked, setChecked] = useState(false);
+  const [descricao, setDescricao] = useState('');
+  const [categoria, setCategoria] = useState('');
+  const [date, setDate] = useState('');
+
+  const fazCadastroDespesa = () => {
+    console.log('Fazendo cadastro despesa descricao: ' + descricao + ' - valor: ' + valor + ' - data : ' + date + ' - categoria - ' + categoria);
+    fetchNovaDespesa(valorFormatado, descricao, categoria, date);
+    navigation.navigate("Home")
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" backgroundColor="#00bf6d" />
@@ -21,15 +36,16 @@ export default function Despesa() {
       <View style={styles.valorDespesaDiv}>
         <CurrencyInput
           style={styles.valorDespesa}
-          value={value}
+          value={valor}
           placeholder="R$ 0,00"
-          onChangeValue={setValue}
+          onChangeValue={setValor}
           prefix="R$ "
           delimiter="."
           separator=","
           precision={2}
           onChangeText={(formattedValue) => {
             console.log(formattedValue);
+            setValorFormatado(formattedValue);
           }}
         />
       </View>
@@ -43,7 +59,7 @@ export default function Despesa() {
         </Text>
         <View style={styles.calendarInput}>
           <Text>Data de vencimento</Text>
-          <Input placeholder={"20/10/2023"} />
+          <Input placeholder={"20/10/2023"} value={date} onChangeText={setDate} />
         </View>
       </View>
 
@@ -57,7 +73,7 @@ export default function Despesa() {
         </Text>
         <View style={styles.descricaoInput}>
           <Text>Descricao</Text>
-          <Input placeholder="Ex: Cartão de Crédito" />
+          <Input placeholder="Ex: Cartão de Crédito" value={descricao} onChangeText={setDescricao} />
         </View>
       </View>
 
@@ -67,7 +83,7 @@ export default function Despesa() {
         </Text>
         <View style={styles.classificacaoInput}>
           <Text>Classificacao</Text>
-          <Input placeholder="Ex: Viagem" />
+          <Input placeholder="Ex: Viagem" value={categoria} onChangeText={setCategoria} />
         </View>
       </View>
 
@@ -95,7 +111,7 @@ export default function Despesa() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => console.log("teste")}
+        onPress={() => fazCadastroDespesa()}
       >
         <Text style={styles.buttonText}>Salvar</Text>
       </TouchableOpacity>

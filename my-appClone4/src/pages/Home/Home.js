@@ -5,7 +5,10 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
+  RefreshControl,
 } from "react-native";
+import React from 'react';
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
@@ -13,95 +16,141 @@ import { AntDesign } from "@expo/vector-icons";
 import Data from "../../components/Detalhe/Data";
 import Menu from "../../components/MenuInferior/Menu";
 import ButtonPlus from "../../components/ButtonPlus/ButtonPlus";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../contexts/auth/auth";
+import { fetchDespesas } from "../../api/despesas";
+import { useFocusEffect } from '@react-navigation/native';
 
-const list = [
-  {
-    id: 1,
-    valorTotal: "500,00",
-    date: "09/06/2023",
-    listaItens: [
-      {
-        id: 1,
-        descricao: "Loja 1",
-        valor: "100,00",
-        date: "09/09/2023",
-        categoria: "Cartão de Crédito",
-      },
-      {
-        id: 2,
-        descricao: "Loja 2",
-        valor: "250,00",
-        date: "09/09/2023",
-        categoria: "Cartão de Crédito",
-      },
-      {
-        id: 3,
-        descricao: "Loja 3",
-        valor: "250,00",
-        date: "09/09/2023",
-        categoria: "Cartão de Crédito",
-      },
-    ],
-  },
-  {
-    id: 2,
-    valorTotal: "300,00",
-    date: "10/06/2023",
-    listaItens: [
-      {
-        id: 1,
-        descricao: "Loja 3",
-        valor: "300,00",
-        date: "10/09/2023",
-        categoria: "Cartão de Crédito",
-      },
-    ],
-  },
-  {
-    id: 3,
-    valorTotal: "500,00",
-    date: "11/06/2023",
-    listaItens: [
-      {
-        id: 1,
-        descricao: "Loja 3",
-        valor: "300,00",
-        date: "11/09/2023",
-        categoria: "Cartão de Crédito",
-      },
-      {
-        id: 2,
-        descricao: "Loja 2",
-        valor: "200,00",
-        date: "11/09/2023",
-        categoria: "Cartão de Crédito",
-      },
-    ],
-  },
-  {
-    id: 4,
-    valorTotal: "500,00",
-    date: "12/06/2023",
-    listaItens: [
-      {
-        id: 1,
-        descricao: "Loja 3",
-        valor: "300,00",
-        date: "12/09/2023",
-        categoria: "Cartão de Crédito",
-      },
-      {
-        id: 2,
-        descricao: "Loja 2",
-        valor: "200,00",
-        date: "12/09/2023",
-        categoria: "Cartão de Crédito",
-      },
-    ],
-  },
+
+var list = [
+
 ];
 
 export default function Home() {
+
+    const [name, setName] = useState("");
+
+    const { user } = useContext(AuthContext);
+    const [despesas, setDespesas] = useState([]);
+    const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  function agruparPorData(listaItens) {
+    // Objeto para armazenar os totais agrupados por data
+    const totaisPorData = {};
+
+    // Iterar sobre cada item da lista
+    listaItens.forEach(item => {
+      // Extrair o valor numérico da string
+      const valorNumerico = parseFloat(item.valor.replace("R$ ", "").replace(",", "."));
+
+      // Extrair dia, mês e ano da data
+      const [dia, mes, ano] = item.date.split('/');
+
+      // Criar uma data formatada para ordenação
+      const dataFormatada = new Date(`${ano}-${mes}-${dia}`);
+
+      // Verificar se a data já existe nos totaisPorData
+      if (!totaisPorData[item.date]) {
+        // Se não existir, inicializar com o valor do item
+        totaisPorData[item.date] = {
+          valorTotal: valorNumerico,
+          date: item.date,
+          listaItens: [item],
+        };
+      } else {
+        // Se existir, adicionar o valor do item ao total existente
+        totaisPorData[item.date].valorTotal += valorNumerico;
+        // Adicionar o item à lista de itens existente
+        totaisPorData[item.date].listaItens.push(item);
+      }
+    });
+
+    // Converter o objeto em um array de totaisPorData
+    const resultado = Object.values(totaisPorData);
+
+    // Ordenar por data de forma decrescente (mais recente primeiro)
+    resultado.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // Atribuir IDs sequenciais, começando de 1 para a data mais antiga
+    resultado.forEach((item, index) => {
+      item.id = index + 1;
+    });
+
+    // Formatar o valor total para incluir "R$" e vírgula como separador decimal
+    resultado.forEach(item => {
+      item.valorTotal = `R$ ${item.valorTotal.toFixed(2).replace(".", ",")}`;
+    });
+
+    // Criar uma nova variável resultadoPorData ordenada de forma crescente (mais antiga primeiro)
+    const resultadoPorData = resultado.slice().reverse();
+
+    return resultadoPorData;
+  }
+
+  function ordenarItensPorDataDecrescente(listaItens) {
+    // Converter as datas para objetos Date
+    const datasObjeto = listaItens.map(item => {
+      const [dia, mes, ano] = item.date.split('/');
+      return { ...item, dateObj: new Date(ano, mes - 1, dia) };
+    });
+
+    // Ordenar os itens por data em ordem decrescente
+    datasObjeto.sort((a, b) => b.dateObj - a.dateObj);
+
+    // Remover a propriedade dateObj antes de retornar
+    const itensOrdenados = datasObjeto.map(item => {
+      const { dateObj, ...rest } = item;
+      return rest;
+    });
+
+    return itensOrdenados;
+  }
+
+  const loadData = async () => {
+    setLoading(true);
+
+    try {
+      var despesasData = await fetchDespesas();
+      setDespesas(despesasData);
+      console.log("Response despesas ", despesasData);
+      list = agruparPorData(despesasData);
+      list = ordenarItensPorDataDecrescente(list);
+      console.log("list reordenada list ", {list});
+      setRefreshing(false);
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    console.log('Mounting Home');
+    loadData();
+
+
+    return () => {
+      console.log('Unmounting Home');
+    }
+  }, []);
+
+  // Função chamada quando o usuário puxa para baixo para atualizar
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadData();
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Coloque aqui o código para executar ao receber foco
+      console.log('Tela foi focada!');
+      loadData();
+
+    }, [])
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.containerHeader}>
@@ -117,7 +166,7 @@ export default function Home() {
             </TouchableOpacity>
           </View>
           <View>
-            <Text style={styles.infoMesAno}>Junho 2021</Text>
+            <Text style={styles.infoMesAno}>Novembro 2023</Text>
           </View>
           <View>
             <TouchableOpacity onPress={() => alert("Avançou")}>
@@ -125,10 +174,10 @@ export default function Home() {
             </TouchableOpacity>
           </View>
           <View>
-            <TouchableOpacity onPress={() => alert("Filtro")}>
+            <TouchableOpacity onPress={() => loadData()}>
               <MaterialCommunityIcons
                 style={styles.buttonFiltro}
-                name="filter-variant"
+                name="cloud-refresh"
                 size={24}
                 color="white"
               />
@@ -172,17 +221,19 @@ export default function Home() {
       </View>
 
       <View style={styles.containerBody}>
-
-          <FlatList
-            style={{
-              width: "100%", // Ocupa toda a largura disponível
-              marginLeft: 40,
-              paddingTop: 10,
-            }}
-            data={list}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={({ item }) => <Data data={item} />}
-          />
+        <FlatList
+          style={{
+            width: "100%", // Ocupa toda a largura disponível
+            marginLeft: 40,
+            paddingTop: 10,
+          }}
+          data={list}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => <Data data={item} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
       </View>
 
       <Menu />

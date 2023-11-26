@@ -4,7 +4,7 @@ import Item from "./Item";
 const list = [
   {
     id: 1,
-    descricao: "Loja 1",
+    descricao: "Loja 1aaaaaaa",
     valor: "100,00",
     date: "09/09/2023",
     categoria: "Cartão de Crédito",
@@ -34,7 +34,7 @@ export default function Data({ data }) {
           <Text style={styles.data}>{data.date}</Text>
         </View>
         <View>
-          <Text style={styles.total}>{`R$ ${data.valorTotal}`}</Text>
+          <Text style={styles.total}>{`${data.valorTotal}`}</Text>
         </View>
       </View>
 

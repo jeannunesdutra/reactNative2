@@ -14,7 +14,7 @@ export default function Item({ data }) {
           <Text style={styles.textCategoria}>{data.categoria}</Text>
         </View>
         <View style={styles.valor}>
-          <Text style={styles.textValor}>{`R$ ${data.valor}`}</Text>
+          <Text style={styles.textValor}>{`${data.valor.includes("R$") ? data.valor : "R$ " + data.valor}`}</Text>
           <Entypo name="circle-with-minus" size={12} color="red" />
         </View>
       </View>
