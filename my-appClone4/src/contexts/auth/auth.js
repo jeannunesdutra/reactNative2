@@ -29,7 +29,7 @@ const AuthProvider = ({ children }) => {
             navigation.navigate('Home');
 
         } catch (error) {
-            console.log("ERRO AO FAZER LOGIN ", error);
+            alert("ERRO AO FAZER LOGIN ", error);
         }
 
     }

@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
+    marginTop: 15
   },
   containerBody: {
     flex: 0.7,
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
     color: "#fff", // Cor do título
   },
   titleNameUser: {
-    fontSize: 18, // Tamanho da fonte do título
+    fontSize: 15, // Tamanho da fonte do título
     color: "#fff", // Cor do título
     alignContent: "center",
     alignItems: "center",
