@@ -19,6 +19,7 @@ import ButtonPlus from "../../components/ButtonPlus/ButtonPlus";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/auth/auth";
 import { fetchDespesas } from "../../api/despesas";
+import { fetchDespesasPeriodo } from "../../api/despesas";
 import { useFocusEffect } from '@react-navigation/native';
 
 
@@ -26,14 +27,51 @@ var list = [
 
 ];
 
+
 export default function Home() {
 
-    const [name, setName] = useState("");
+  const [name, setName] = useState("");
 
-    const { user } = useContext(AuthContext);
-    const [despesas, setDespesas] = useState([]);
-    const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
+  const [despesas, setDespesas] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  var [dataAtual, setDataAtual] = useState({});
+  var [totais, setTotais] = useState({});
+
+  function calcularTotais(dados) {
+    let totalPago = 0;
+    let totalAPagar = 0;
+
+    dados.forEach(item => {
+      const valorNumerico = parseFloat(item?.valor?.replace("R$ ", "").replace(",", "."));
+
+      if (item.pago === "1") {
+        totalPago += valorNumerico;
+      } else {
+        totalAPagar += valorNumerico;
+      }
+    });
+  
+    console.log("total a pago ", totalPago);
+    let aPagar = 'RS ';
+    let pago;
+    let totais = 0;
+    let totalMes;
+    if (totalAPagar != undefined && totalAPagar != NaN){
+      aPagar = 'R$ '+totalAPagar.toFixed(2).replace(".", ","); 
+      totais = totais + totalAPagar;
+    }
+    if (totalPago != undefined && totalPago != NaN) {
+      pago = 'R$ ' + totalPago.toFixed(2).replace(".", ",");
+      totais = totais + totalPago;
+    }
+    totalMes = 'R$ ' + totais.toFixed(2).replace(".", ",");
+
+    console.log("***********total a pagar ", aPagar);
+    return { aPagar, pago, totalMes };
+  }
+
 
   function agruparPorData(listaItens) {
     // Objeto para armazenar os totais agrupados por data
@@ -107,18 +145,57 @@ export default function Home() {
     return itensOrdenados;
   }
 
-  const loadData = async () => {
+  function obterNomeMes(numeroMes) {
+    const meses = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+
+    return meses[numeroMes - 1]; // Os meses no array começam do índice 0
+  }
+
+  // Função para obter o mês e ano atual e retornar um objeto
+  function obterMesEAnoAtual() {
+    const agora = new Date();
+    const numeroMes = agora.getMonth() + 1; // O mês começa do zero
+    const nomeMes = obterNomeMes(numeroMes);
+    const ano = agora.getFullYear();
+
+    const mesAno = `${nomeMes} ${ano}`;
+    const mes = numeroMes;
+
+    // Criar e retornar o objeto dataAtual
+    const dataAtual = {
+      mes: mes,
+      ano: ano,
+      mesAnoPorExtenso: mesAno
+    };
+    console.log("Data ATUAL -> ", dataAtual);
+    return dataAtual;
+  }
+
+  function loadMesAtual() {
+    var datainicializacao = obterMesEAnoAtual();
+    setDataAtual(datainicializacao);
+    var periodo = `${datainicializacao.mes + "/" + datainicializacao.ano}`;
+    loadData(periodo);
+  }
+
+  const loadData = async (periodo) => {
+
     setLoading(true);
 
     try {
-      var despesasData = await fetchDespesas();
+      console.log("======= PERIODO ", `${dataAtual.mes + "/" + dataAtual.ano}`);
+      var despesasData = await fetchDespesasPeriodo(periodo, user.id);
+      
       setDespesas(despesasData);
       console.log("Response despesas ", despesasData);
       list = agruparPorData(despesasData);
       list = ordenarItensPorDataDecrescente(list);
-      console.log("list reordenada list ", {list});
+      console.log("list reordenada list ", { list });
       setRefreshing(false);
-
+      setTotais(calcularTotais(despesasData));
     } catch (error) {
       console.log(error);
     } finally {
@@ -128,8 +205,7 @@ export default function Home() {
 
   useEffect(() => {
     console.log('Mounting Home');
-    loadData();
-
+    loadMesAtual();
 
     return () => {
       console.log('Unmounting Home');
@@ -139,17 +215,22 @@ export default function Home() {
   // Função chamada quando o usuário puxa para baixo para atualizar
   const onRefresh = () => {
     setRefreshing(true);
-    loadData();
+    loadMesAtual();
   };
 
   useFocusEffect(
     React.useCallback(() => {
       // Coloque aqui o código para executar ao receber foco
       console.log('Tela foi focada!');
-      loadData();
+      var datainicializacao = obterMesEAnoAtual();
+      var periodo = `${datainicializacao.mes + "/" + datainicializacao.ano}`;
+
+      loadMesAtual();
 
     }, [])
   );
+
+  
 
   return (
     <View style={styles.container}>
@@ -165,16 +246,20 @@ export default function Home() {
               />
             </TouchableOpacity>
           </View>
+
           <View>
-            <Text style={styles.infoMesAno}>Novembro 2023</Text>
+            <Text style={styles.infoMesAno}>{`${dataAtual.mesAnoPorExtenso}`}</Text>
+
           </View>
+          
           <View>
             <TouchableOpacity onPress={() => alert("Avançou")}>
               <MaterialIcons name="navigate-next" size={24} color="white" />
             </TouchableOpacity>
           </View>
+          
           <View>
-            <TouchableOpacity onPress={() => loadData()}>
+            <TouchableOpacity onPress={() => loadMesAtual()}>
               <MaterialCommunityIcons
                 style={styles.buttonFiltro}
                 name="cloud-refresh"
@@ -185,10 +270,12 @@ export default function Home() {
           </View>
         </View>
         <View>
+          <Text style={styles.titleNameUser}>{user.name}</Text>
+
           <Text style={styles.titleTotalMes}>Total do mês</Text>
         </View>
         <View>
-          <Text style={styles.valorTotalMes}>R$ 1.819,00</Text>
+          <Text style={styles.valorTotalMes}>{totais.totalMes}</Text>
         </View>
         <View style={styles.susbtotais}>
           <View style={styles.pago}>
@@ -200,7 +287,7 @@ export default function Home() {
                 <Text style={styles.titlePago}>Pago</Text>
               </View>
               <View>
-                <Text style={styles.totalPago}>R$ 19,00</Text>
+                <Text style={styles.totalPago}>{totais.pago}</Text>
               </View>
             </View>
           </View>
@@ -213,9 +300,10 @@ export default function Home() {
                 <Text style={styles.titlePagar}>A pagar</Text>
               </View>
               <View>
-                <Text style={styles.totalPagar}>R$ 1.800,00</Text>
+                <Text style={styles.totalPagar}>{totais.aPagar}</Text>
               </View>
             </View>
+        
           </View>
         </View>
       </View>
@@ -294,6 +382,13 @@ const styles = StyleSheet.create({
   titleTotalMes: {
     fontSize: 18, // Tamanho da fonte do título
     color: "#fff", // Cor do título
+  },
+  titleNameUser: {
+    fontSize: 18, // Tamanho da fonte do título
+    color: "#fff", // Cor do título
+    alignContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
   },
   valorTotalMes: {
     fontSize: 30, // Tamanho da fonte do título

@@ -22,6 +22,7 @@ const AuthProvider = ({ children }) => {
 
             api.defaults.headers.authorization = token;
             setUser(user);
+            console.log("@@@@@@@@@USER ", user);
 
             setIsLogged(true);
         } catch (error) {

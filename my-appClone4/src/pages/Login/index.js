@@ -34,6 +34,9 @@ export default function Login(props) {
             <TextInput value={email} onChangeText={setEmail} />
             <Text>Informe sua senha</Text>
             <TextInput value={password} onChangeText={setPassword} />
+            <Text>=======================</Text>
+            <Text>=======================</Text>
+            <Text>=======================</Text>
 
             <Button title="Login"
                 onPress={() => {

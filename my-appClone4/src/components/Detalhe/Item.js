@@ -15,7 +15,7 @@ export default function Item({ data }) {
         </View>
         <View style={styles.valor}>
           <Text style={styles.textValor}>{`${data.valor.includes("R$") ? data.valor : "R$ " + data.valor}`}</Text>
-          <Entypo name="circle-with-minus" size={12} color="red" />
+          <Entypo name= {`${data.pago == 0 ? 'circle-with-minus' : 'circle-with-plus'}`}  size={12} color={`${data.pago == 0 ? 'red' : 'green'}`} />
         </View>
       </View>
     </TouchableOpacity>
