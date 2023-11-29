@@ -4,19 +4,19 @@ import {
     Text,
     StyleSheet,
     TextInput,
-    Button,
     TouchableOpacity,
 } from "react-native";
 
 import * as Animatable from "react-native-animatable";
-import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../contexts/auth/auth";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Cadastrar() {
 
+    const navigation = useNavigation();
 
-    const { signIn, signUp, setIsNewUser } = useContext(AuthContext);
+    const {signUp, setIsNewUser } = useContext(AuthContext);
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -26,6 +26,7 @@ export default function Cadastrar() {
         console.log('Fazendo cadastro com nome: ' + name + ' - email: ' + email + ' - senha: ' + password);
         signUp(name, email, password);
         setIsNewUser(false);
+        navigation.navigate('Logar');
     };
 
     return (
@@ -55,7 +56,7 @@ export default function Cadastrar() {
                     <Text style={styles.buttonText}>Cadastrar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonRegister} onPress={() => setIsNewUser(false) }>
+                <TouchableOpacity style={styles.buttonRegister} onPress={() => navigation.navigate('Logar') }>
                     <Text style={styles.registerText}>
                         Voltar
                     </Text>

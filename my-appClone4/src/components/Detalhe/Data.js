@@ -1,32 +1,8 @@
 import { StyleSheet, Text, View, FlatList } from "react-native";
 import Item from "./Item";
 
-const list = [
-  {
-    id: 1,
-    descricao: "Loja 1aaaaaaa",
-    valor: "100,00",
-    date: "09/09/2023",
-    categoria: "Cartão de Crédito",
-  },
-  {
-    id: 2,
-    descricao: "Loja 2",
-    valor: "200,00",
-    date: "09/09/2023",
-    categoria: "Cartão de Crédito",
-  },
-  {
-    id: 3,
-    descricao: "Loja 3",
-    valor: "300,00",
-    date: "09/09/2023",
-    categoria: "Cartão de Crédito",
-  },
-];
-
 export default function Data({ data }) {
-  console.log('teste ', data.listaItens[0]);
+  //console.log('teste ', data.listaItens[0]);
   return (
     <View style={styles.container}>
       <View style={styles.dataTotal}>

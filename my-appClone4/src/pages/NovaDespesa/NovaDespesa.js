@@ -9,9 +9,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { fetchNovaDespesa } from "../../api/despesas";
 import { useNavigation } from "@react-navigation/native";
-import OpcoesSituacaoPagamento from "../../components/ListaOpcoes/situacaoPagamento"
 import { AuthContext } from "../../contexts/auth/auth";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 
 import ModalSelector from 'react-native-modal-selector';
 
@@ -42,9 +41,9 @@ export default function Despesa() {
   };
 
   const fazCadastroDespesa = () => {
-    console.log('Fazendo cadastro despesa descricao: ' + descricao + ' - valor: ' + valor + ' - data : ' + date + ' - categoria - ' + categoria);
+    //console.log('Fazendo cadastro despesa descricao: ' + descricao + ' - valor: ' + valor + ' - data : ' + date + ' - categoria - ' + categoria);
     fetchNovaDespesa(valorFormatado, descricao, categoria, date, situacaoPagamento != null ? situacaoPagamento : 0, user.id);
-    navigation.navigate("Home")
+    navigation.navigate("Home");
   };
 
   function obterDataAtual() {

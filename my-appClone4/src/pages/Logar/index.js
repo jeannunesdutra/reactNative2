@@ -4,26 +4,24 @@ import {
     Text,
     StyleSheet,
     TextInput,
-    Button,
     TouchableOpacity,
 } from "react-native";
 
 import * as Animatable from "react-native-animatable";
 import { useNavigation } from "@react-navigation/native";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/auth/auth";
 
 export default function Logar() {
-    const { signIn, signUp, setIsNewUser } = useContext(AuthContext);
+    const { signIn, isLogged, setIsNewUser } = useContext(AuthContext);
 
     const navigation = useNavigation();
 
-    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const fazLogin = () => {
-        console.log('Fazendo login com email: ' + email + ' e senha: ' + password);
+        //console.log('Fazendo login com email: ' + email + ' e senha: ' + password);
         signIn(email, password);
     };
 
@@ -51,7 +49,7 @@ export default function Logar() {
                     <Text style={styles.buttonText}>Acessar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonRegister} onPress={() => setIsNewUser(true)}>
+                <TouchableOpacity style={styles.buttonRegister} onPress={() => navigation.navigate('Cadastrar')}>
                     <Text style={styles.registerText}>
                         Não possui uma conta? Cadastre-se
                     </Text>

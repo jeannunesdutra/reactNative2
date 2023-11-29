@@ -1,9 +1,11 @@
 import { createContext, useState } from "react";
 import api from "../../api/api";
+import { useNavigation } from "@react-navigation/native";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+    const navigation = useNavigation();
 
     const [isLogged, setIsLogged] = useState(false);
     const [isNewUser, setIsNewUser] = useState(false);
@@ -21,12 +23,13 @@ const AuthProvider = ({ children }) => {
             const { user, token } = response.data;
 
             api.defaults.headers.authorization = token;
+            console.log("USER REQUISIÇÂO: ", user);
             setUser(user);
-            console.log("@@@@@@@@@USER ", user);
+            setIsLogged( user != undefined ? true : false);
+            navigation.navigate('Home');
 
-            setIsLogged(true);
         } catch (error) {
-            console.log("ERRO AO FAZER LOGIN ")
+            console.log("ERRO AO FAZER LOGIN ", error);
         }
 
     }
@@ -38,10 +41,6 @@ const AuthProvider = ({ children }) => {
                 email,
                 password
             });
-            //const { name, email } = response.data;
-            console.log("response.data", response);
-           // setIsLogged(false);
-           // setIsNewUser(false);
            alert("Usuário Cadastrado"); 
         } catch (error) {
             console.log("ERRO AO FAZER Cadastro ")
