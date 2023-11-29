@@ -128,10 +128,22 @@ export default function Despesa() {
       </View>
 
       <View style={styles.containerOption}>
-        <Text>Situação do Pagamento: {situacaoPagamento !== null ? data[situacaoPagamento].label : 'Nenhuma opção selecionada'}</Text>
+        <Text style={{ color :'black',
+        }}>Situação do Pagamento:</Text>
         <ModalSelector
+          style={{
+          }}
+          optionTextStyle={{
+            color: 'black', // Cor do texto das opções
+          }}
+          cancelTextStyle={{
+            color: 'red', // Cor do texto do botão Cancelar
+          }}
+          initValueTextStyle={{
+            color: situacaoPagamento !== null ? 'black' : 'red', // Cor do texto do initValue
+          }}
           data={data}
-          initValue="Siuação do Pagamento "
+          initValue={situacaoPagamento !== null ? data[situacaoPagamento].label : 'Nenhuma opção selecionada'}
           onChange={(option) => handleOptionSelect(option)}
         />
       </View>

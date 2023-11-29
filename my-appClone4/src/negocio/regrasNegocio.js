@@ -3,8 +3,9 @@ function calcularTotais(dados) {
     let totalAPagar = 0;
 
     dados.forEach(item => {
-        const valorNumerico = parseFloat(item?.valor?.replace("R$ ", "").replace(",", "."));
-
+        console.log('VALOR valorNumerico oiginal ', item?.valor);
+        const valorNumerico = parseFloat(item?.valor?.replace("R$ ", "").replace(".", "").replace(",", "."));
+        console.log('VALOR valorNumerico ', valorNumerico)
         if (item.pago === "1") {
             totalPago += valorNumerico;
         } else {
@@ -27,8 +28,27 @@ function calcularTotais(dados) {
     }
     totalMes = 'R$ ' + totais.toFixed(2).replace(".", ",");
 
+    aPagar = formatarMoeda(aPagar);
+    pago = formatarMoeda(pago);
+    totalMes = formatarMoeda(totalMes);
+
     //console.log("***********total a pagar ", aPagar);
     return { aPagar, pago, totalMes };
+}
+
+function formatarMoeda(valor) {
+    // Converte para número removendo o símbolo R$ e substituindo a vírgula por ponto
+    const numero = parseFloat(valor.replace("R$ ", "").replace(",", "."));
+
+    // Formata o número como moeda brasileira
+    const formatoMoeda = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+    });
+
+    // Retorna o valor formatado
+    return formatoMoeda.format(numero);
 }
 
 function agruparPorData(listaItens) {
@@ -38,7 +58,7 @@ function agruparPorData(listaItens) {
     // Iterar sobre cada item da lista
     listaItens.forEach(item => {
         // Extrair o valor numérico da string
-        const valorNumerico = parseFloat(item.valor.replace("R$ ", "").replace(",", "."));
+        const valorNumerico = parseFloat(item.valor.replace("R$ ", "").replace(".", "").replace(",", "."));
 
         // Extrair dia, mês e ano da data
         const [dia, mes, ano] = item.date.split('/');
@@ -75,7 +95,7 @@ function agruparPorData(listaItens) {
 
     // Formatar o valor total para incluir "R$" e vírgula como separador decimal
     resultado.forEach(item => {
-        item.valorTotal = `R$ ${item.valorTotal.toFixed(2).replace(".", ",")}`;
+        item.valorTotal = formatarMoeda(`R$ ${item.valorTotal.toFixed(2).replace(".", ",")}`);
     });
 
     // Criar uma nova variável resultadoPorData ordenada de forma crescente (mais antiga primeiro)
