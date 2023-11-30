@@ -5,6 +5,11 @@ export const fetchDespesas = async () => {
     return response.data;
 }
 
+export const fetchAtivarApi = async () => {
+    const response = await api.get('/');
+    return response.data;
+}
+
 export const fetchDespesasPeriodo = async (periodo, user_id) => {
     var response;
     try {

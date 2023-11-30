@@ -8,13 +8,22 @@ import {
 } from "react-native";
 
 import * as Animatable from 'react-native-animatable'
+import { useEffect } from "react";
 
 import { useNavigation } from '@react-navigation/native'
+import { fetchAtivarApi } from "../../api/despesas";
 
 export default function Welcome() {
 
     const navigation = useNavigation();
 
+    useEffect(() => {
+        console.log('Mounting Welcome');
+        var resposta = fetchAtivarApi();
+        return () => {
+            console.log('Unmounting Welcome');
+        }
+    }, []);
     return (
         <View style={styles.container}>
 
